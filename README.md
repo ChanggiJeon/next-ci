@@ -1,28 +1,49 @@
 # 프론트엔드 CI/CD 파이프라인
 
-## 개요
-
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/83c75a39-3aba-4ba4-a792-7aefe4b07895/6912169d-ce70-41bf-b624-946d4ee984eb/Untitled.png)
-
-GitHub Actions에 워크플로우를 작성해 다음과 같이 배포가 진행되도록 함
-
-1. 저장소를 체크아웃합니다.
-2. Node.js 18.x 버전을 설정합니다.
-3. 프로젝트 의존성을 설치합니다.
-4. Next.js 프로젝트를 빌드합니다.
-5. AWS 자격 증명을 구성합니다.
-6. 빌드된 파일을 S3 버킷에 동기화합니다.
-7. CloudFront 캐시를 무효화합니다.
-
 ## 주요 링크
 
-- S3 버킷 웹사이트 엔드포인트: [****\_****](http://hang-hae.s3-website.ap-northeast-2.amazonaws.com)
-- CloudFrount 배포 도메인 이름: [****\_****](https://dncvnkhm7ssn1.cloudfront.net)
+- S3 버킷 웹사이트 엔드포인트: http://hang-hae.s3-website.ap-northeast-2.amazonaws.com
+- CloudFrount 배포 도메인 이름: https://dncvnkhm7ssn1.cloudfront.net
 
 ## 주요 개념
 
-- GitHub Actions과 CI/CD 도구: ****\_****
-- S3와 스토리지: ****\_****
-- CloudFront와 CDN: ****\_****
-- 캐시 무효화(Cache Invalidation): ****\_****
-- Repository secret과 환경변수: ****\_****
+# GitHub Actions과 CI/CD 도구
+
+GitHub Acitions 는 CI/CD기능을 제공하는 도구이다.
+비슷한 역할을 하는 도구로는 Jenkins, CircleCI, Travis-CI등이 있다.
+
+CI(지속적 통합) : 새로운 코드가 레포지토리에 푸쉬되면 자동으로 빌드, 린트체크, 테스트 코드 실행 등이 수행되어 코드의 무결성을 유지함.
+CD(지속적 배포) : CI과정 이후, 애플리케이션을 자동으로 배포하는 단계.
+
+# S3와 스토리지
+
+S3는 AWS에서 제공하는 객체 스토리지 서비스이다.
+대규모 데이터를 안전하게 저장할 수 있고, 버전 관리, 무제한 확장, 데이터 암호화 등이 제공된다.
+Azure의 Blob 스토리지와 유사한 서비스를 제공한다.
+
+# CloudFront와 CDN
+
+한국에 있는 서버에 미국에서 접근하게 되면, 그만큼 데이터 전달에 시간이 걸린다.
+전 세계에 콘텐츠를 빠르게 배포하기 위해 CDN 서비스를 사용한다.
+
+주요 특징
+
+- 빠른 전송 속도
+- 엣지 로케이션(실습에서는 S3)에 캐시하여 요청 시간을 단축
+- 실시간 분석 및 모니터링을 제공
+
+# 캐시 무효화(Cache Invalidation)
+
+CDN에서는 빠른 전달을 위해 전달할 정적 자원을 캐시하여 사용하는데, 새로운 내용이 배포되었을 때 캐시값을 무효화 하지 않으면, 사용자가 변경된 콘텐츠를 보지 못하는 문제가 발생할 수 있다. 이를 해결하기 위해 캐시를 초기화 해야한다.
+
+캐시 무효화하는 방법
+
+1. 명시적 무효화
+2. 자동으로 무효화(만료시간(TTL) 설정)
+
+명시적 무효화의 경우 무효화 생성 탭에 들어가서 제거할 객체의 경로를 입력하여 무효화를 생성할 수 있다.
+
+# Repository secret과 환경변수
+
+GitHub 레포지토리에서 사용하는 민감 정보들을 안전하게 저장하고 사용하는 기능이다.
+GitHub Actions 워크플로우에서 값을 참조 할 수 있으므로 배포에 필요한 정보들을 저장하고 자동으로 CD될 수 있도록 설정이 가능하다.
